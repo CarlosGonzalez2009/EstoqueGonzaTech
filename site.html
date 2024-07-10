@@ -27,42 +27,118 @@
         .search-container {
             margin-top: 10px;
         }
+        .password-container {
+            display: none; /* Inicia oculto */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro semitransparente */
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .password-box {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        .password-input {
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 200px;
+        }
+        .password-submit {
+            padding: 8px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .password-submit:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
-    <h1>Controle de Estoque</h1>
-
-    <form id="addItemForm">
-        <label for="itemName">Nome do Item:</label>
-        <input type="text" id="itemName" required>
-        <label for="itemQuantity">Quantidade:</label>
-        <input type="number" id="itemQuantity" required>
-        <button type="submit">Adicionar Item</button>
-    </form>
-
-    <div class="search-container">
-        <label for="searchItem">Pesquisar Produto:</label>
-        <input type="text" id="searchItem" oninput="searchItem()" placeholder="Digite o nome do produto...">
+    <!-- Container para solicitar senha -->
+    <div id="passwordContainer" class="password-container">
+        <div class="password-box">
+            <h2>Informe a senha para acessar:</h2>
+            <input type="password" id="passwordInput" class="password-input">
+            <button onclick="checkPassword()" class="password-submit">Acessar</button>
+        </div>
     </div>
 
-    <table id="itemList">
-        <thead>
-            <tr>
-                <th>Nome do Item</th>
-                <th>Quantidade</th>
-                <th>Cliente</th>
-                <th>Status</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Os itens serão adicionados aqui dinamicamente -->
-        </tbody>
-    </table>
+    <!-- Conteúdo principal -->
+    <div id="mainContent" style="display: none;">
+        <h1>Controle de Estoque</h1>
 
-    <button onclick="clearStock()">Limpar Estoque</button>
+        <form id="addItemForm">
+            <label for="itemName">Nome do Item:</label>
+            <input type="text" id="itemName" required>
+            <label for="itemQuantity">Quantidade:</label>
+            <input type="number" id="itemQuantity" required>
+            <button type="submit">Adicionar Item</button>
+        </form>
+
+        <div class="search-container">
+            <label for="searchItem">Pesquisar Produto:</label>
+            <input type="text" id="searchItem" oninput="searchItem()" placeholder="Digite o nome do produto...">
+        </div>
+
+        <table id="itemList">
+            <thead>
+                <tr>
+                    <th>Nome do Item</th>
+                    <th>Quantidade</th>
+                    <th>Cliente</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Os itens serão adicionados aqui dinamicamente -->
+            </tbody>
+        </table>
+
+        <button onclick="clearStock()">Limpar Estoque</button>
+    </div>
 
     <script>
+        // Função para verificar a senha
+        function checkPassword() {
+            var password = document.getElementById('passwordInput').value;
+            if (password === '130102') {
+                // Senha correta, exibe o conteúdo principal e oculta o container da senha
+                document.getElementById('passwordContainer').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                // Inicializa a aplicação
+                initializeApp();
+            } else {
+                alert('Senha incorreta. Tente novamente.');
+            }
+        }
+
+        // Função para inicializar a aplicação após autenticação
+        function initializeApp() {
+            // Verifica se há itens salvos no localStorage ao carregar a página
+            renderItems();
+
+            // Event listener para submissão do formulário
+            document.getElementById('addItemForm').addEventListener('submit', addItem);
+
+            // Renderiza os itens ao carregar a página
+            window.onload = renderItems;
+        }
+
         // Função para adicionar um item ao estoque
         function addItem(event) {
             event.preventDefault();
@@ -158,12 +234,6 @@
                                 <td><button onclick="toggleStatus(${items.indexOf(item)})">${item.status === 'No Estoque' ? 'Marcar Vendido' : 'Marcar no Estoque'}</button></td>`;
             });
         }
-
-        // Event listener para submissão do formulário
-        document.getElementById('addItemForm').addEventListener('submit', addItem);
-
-        // Renderiza os itens ao carregar a página
-        window.onload = renderItems;
     </script>
 </body>
 </html>
